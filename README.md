@@ -11,8 +11,13 @@ An AI-powered music recommendation system that translates your vibe into the per
 
 ### Backend Setup
 1. Navigate to `/backend`
-2. Sync dependencies with `uv`: `uv sync`
-3. Run server: `uv run uvicorn app.main:app --reload`
+2. Sync dependencies: `uv sync`
+3. Run dev server: `uv run uvicorn app.main:app --reload`
+4. **Production Run (Multiple Workers)**:
+   - *On Linux (Standard)*:
+     `uv run gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000`
+   - *On Windows (Alternative)*:
+     `uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4`
 
 ### Frontend Setup
 1. Navigate to `/frontend`

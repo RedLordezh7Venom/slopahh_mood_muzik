@@ -12,8 +12,18 @@ from app.services.playlist_service import generate_playlist_name
 from app.core.database import session_scope, engine, Base
 from app.models.mood_history import MoodHistory
 
-# Load env variables
-load_dotenv()
+# Flexible Environment Loading: Checks current and parent directories for .env
+env_paths = [".env", "../.env"]
+env_found = False
+for path in env_paths:
+    if os.path.exists(path):
+        load_dotenv(dotenv_path=path)
+        print(f"INFO: Loaded environment from {path}")
+        env_found = True
+        break
+
+if not env_found:
+    print("WARNING: No .env found. Ensure environment variables are set manually.")
 
 # Initialize Database
 Base.metadata.create_all(bind=engine)
