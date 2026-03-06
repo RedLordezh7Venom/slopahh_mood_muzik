@@ -2,10 +2,15 @@ from flask import Flask
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
+from app.core.database import engine, Base
+from app.models.mood_history import MoodHistory # Import model to ensure it's registered
 
 def create_app():
     # Load environment variables
     load_dotenv()
+
+    # Ensure database tables are created
+    Base.metadata.create_all(bind=engine)
 
     app = Flask(__name__, static_folder='../static', static_url_path='/')
 
