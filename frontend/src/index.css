@@ -1,259 +1,200 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
 :root {
-  --primary: #00ff00;
-  /* Classic Terminal Green */
-  --bg-dark: #000000;
-  --bg-card: #111111;
-  --text-main: #ffffff;
-  --text-muted: #aaaaaa;
-  --vibe-color: #00ff00;
-  --border-style: 2px outset #444;
-  --border-active: 2px inset #00ff00;
+  --bg: #000000;
+  --text: #ffffff;
+  --text-dim: #999999;
+  --vibe: #00ff00;
+  /* Dynamic accent color */
+  --border: 1px solid #333333;
 }
 
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  image-rendering: pixelated;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: "Tahoma", "Arial", sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  min-height: 100vh;
-  padding: 10px;
-  background-image: radial-gradient(circle, #1a1a1a 1px, transparent 1px);
-  background-size: 20px 20px;
-  transition: border-color 0.5s ease;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Tahoma", "Verdana", sans-serif;
+  line-height: 1.4;
+  padding: 20px;
 }
 
 #root {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
 .container {
-  max-width: 700px;
+  max-width: 650px;
   width: 100%;
-  border: 4px outset #555;
-  background: #1a1a1a;
-  padding: 20px;
-  box-shadow: 10px 10px 0px #000;
+  border: 1px solid var(--vibe);
+  padding: 40px;
+  margin-top: 20px;
 }
 
-/* Header Section (2007 Forum/Winamp Style) */
+/* Typography */
 header {
-  border-bottom: 2px solid var(--vibe-color);
-  margin-bottom: 20px;
-  padding-bottom: 5px;
-  background: #222;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #222;
+  padding-bottom: 20px;
 }
 
 h1 {
-  font-family: 'VT323', monospace;
-  font-size: 3rem;
-  font-weight: normal;
-  color: var(--vibe-color);
-  text-shadow: 2px 2px #000;
+  font-size: 28px;
+  font-weight: bold;
   letter-spacing: -1px;
+  color: #fff;
+  margin-bottom: 5px;
 }
 
 .subtitle {
-  color: #fff;
-  font-size: 0.9rem;
-  background: var(--vibe-color);
-  color: #000;
-  display: inline-block;
-  padding: 2px 5px;
+  font-size: 12px;
+  color: var(--vibe);
+  text-transform: uppercase;
   font-weight: bold;
+  letter-spacing: 1px;
 }
 
-/* Input Section */
+/* Input Area */
 .vibe-input-group {
-  margin-bottom: 15px;
-  background: #000;
-  padding: 10px;
-  border: 2px inset #444;
+  margin: 30px 0;
 }
 
 .main-input {
   width: 100%;
-  background: transparent;
-  border: none;
-  color: var(--vibe-color);
-  font-family: 'VT323', monospace;
-  font-size: 1.5rem;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  padding: 15px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
   outline: none;
 }
 
-/* Prediction Cards / Buttons */
+.main-input:focus {
+  border-color: var(--vibe);
+}
+
+/* Mood Grid */
 .mood-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 5px;
-  margin-bottom: 15px;
-}
-
-.mood-btn {
-  padding: 8px;
-  background: #333;
-  border: var(--border-style);
-  color: #fff;
-  cursor: pointer;
-  font-family: "Tahoma", sans-serif;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  transition: none;
-}
-
-.mood-btn:hover {
-  background: #444;
-}
-
-.mood-btn.active {
-  border: var(--border-active);
-  background: #000;
-  color: var(--vibe-color);
-}
-
-.mood-icon {
-  margin-right: 5px;
-}
-
-/* Random Trigger */
-.random-btn {
-  width: 100%;
-  padding: 10px;
-  background: #222;
-  border: 2px solid #444;
-  color: #888;
-  font-size: 0.8rem;
-  font-weight: bold;
-  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.random-btn:hover {
-  background: #000;
-  color: var(--vibe-color);
-  border-color: var(--vibe-color);
+.mood-btn {
+  background: #111;
+  border: 1px solid #222;
+  color: #888;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: capitalize;
 }
 
-/* Results Container */
-.playlist-header {
-  border: 2px solid var(--vibe-color);
+.mood-btn:hover {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.mood-btn.active {
+  border-color: var(--vibe);
+  color: var(--vibe);
+  background: #001100;
+}
+
+.random-btn {
+  background: none;
+  border: 1px solid #1a1a1a;
+  color: #444;
   padding: 10px;
-  background: #000;
-  margin-bottom: 15px;
+  width: 100%;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.random-btn:hover {
+  color: #666;
+  border-color: #333;
+}
+
+/* Results */
+.playlist-header {
+  margin-bottom: 30px;
+  border-left: 4px solid var(--vibe);
+  padding-left: 20px;
 }
 
 .playlist-title {
-  font-family: 'VT323', monospace;
-  font-size: 2.2rem;
-  color: var(--vibe-color);
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.song-list {
+  list-style: none;
 }
 
 .song-card {
-  background: #111;
-  padding: 10px;
-  border: 1px solid #333;
-  margin-bottom: 10px;
+  padding: 20px 0;
+  border-bottom: 1px solid #111;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .song-title {
-  color: var(--vibe-color);
+  display: block;
+  font-size: 16px;
   font-weight: bold;
-  font-size: 1.1rem;
+  margin-bottom: 3px;
+  color: var(--vibe);
 }
 
 .song-artist {
-  color: #888;
-  font-size: 0.85rem;
+  display: block;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.song-actions {
+  display: flex;
+  gap: 15px;
 }
 
 .action-btn {
-  background: #222;
-  border: 1px solid #444;
-  padding: 5px 10px;
-  color: #fff;
+  font-size: 11px;
   text-decoration: none;
-  font-size: 0.7rem;
-  text-transform: uppercase;
+  color: #777;
+  border: 1px solid #222;
+  padding: 5px 12px;
+  background: #0a0a0a;
 }
 
 .action-btn:hover {
-  background: var(--vibe-color);
-  color: #000;
+  color: #fff;
+  background: #222;
+  border-color: var(--vibe);
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  h1 {
-    font-size: 2rem;
-  }
-
-  .mood-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-/* Animations */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+::-webkit-scrollbar-track {
+  background: #000;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  .mood-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .song-card {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
 }

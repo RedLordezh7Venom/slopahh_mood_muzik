@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import './index.css'
 import { apiService } from './services/api'
-
 import { PlaylistHeader, RecommendationList } from './components/VibeResults'
 
 function App() {
@@ -21,9 +20,9 @@ function App() {
   // Change background color based on mood
   useEffect(() => {
     if (results?.mood?.color_hex) {
-      document.documentElement.style.setProperty('--vibe-color', results.mood.color_hex);
+      document.documentElement.style.setProperty('--vibe', results.mood.color_hex);
     } else {
-      document.documentElement.style.setProperty('--vibe-color', '#00ff00');
+      document.documentElement.style.setProperty('--vibe', '#00ff00');
     }
   }, [results])
 
@@ -39,7 +38,7 @@ function App() {
       });
       setResults(data)
     } catch (err) {
-      alert(err.message || "Vibe check failed. Is the backend running?");
+      alert("Error: " + (err.message || "Failed to fetch vibe. Check server."));
     } finally {
       setLoading(false)
     }
@@ -54,23 +53,23 @@ function App() {
     <div className="container">
       <header>
         <h1>Slopahh Mood Muzik</h1>
-        <p className="subtitle">AI-Powered Music for your current Vibe</p>
+        <p className="subtitle">Interactive Music Recommender</p>
       </header>
 
       <main>
-        {/* Text Input Section */}
+        {/* Input Area */}
         <div className="vibe-input-group">
           <input
             type="text"
             className="main-input"
-            placeholder="Describe your vibe... (e.g., 'raining outside and I feel lonely')"
+            placeholder="Search mood via text... (Enter to submit)"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleRecommendation()}
           />
         </div>
 
-        {/* Predefined Mood Buttons */}
+        {/* Categories */}
         <div className="mood-grid">
           {moods.map((m) => (
             <button
@@ -78,21 +77,19 @@ function App() {
               className={`mood-btn ${activeMood === m.id ? 'active' : ''}`}
               onClick={() => handleRecommendation(m.id)}
             >
-              <span className="mood-icon">{m.label.split(' ')[1]}</span>
-              <span>{m.label.split(' ')[0]}</span>
+              {m.label}
             </button>
           ))}
         </div>
 
-        {/* Random Trigger */}
         <button className="random-btn" onClick={triggerRandom}>
-          ✨ Surprise me with a random vibe
+          [ RANDOMIZE VIBE ]
         </button>
 
-        {/* Loading State */}
-        {loading && <div style={{ textAlign: 'center', fontSize: '1.2rem' }}>Searching for the perfect tracks... 🎧</div>}
+        {/* Status */}
+        {loading && <div style={{ fontSize: '11px', color: 'var(--vibe)', textAlign: 'center' }}>DATA RETRIEVAL IN PROGRESS...</div>}
 
-        {/* Results Container */}
+        {/* Results */}
         {results && (
           <div className="results-section">
             <PlaylistHeader
