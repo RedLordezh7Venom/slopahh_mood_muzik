@@ -11,9 +11,8 @@ An AI-powered music recommendation system that translates your vibe into the per
 
 ### Backend Setup
 1. Navigate to `/backend`
-2. Create a virtual environment: `python -m venv venv`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run server: `uvicorn app.main:app --reload`
+2. Sync dependencies with `uv`: `uv sync`
+3. Run server: `uv run uvicorn app.main:app --reload`
 
 ### Frontend Setup
 1. Navigate to `/frontend`
