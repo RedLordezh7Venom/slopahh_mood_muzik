@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, Search, Shuffle, Moon, Sun, Smile, CloudRain, Zap, Coffee, Target, Flame } from 'lucide-react'
+import { Sparkles, Search, Shuffle, Moon, Sun, Smile, CloudRain, Zap, Coffee, Target, Flame, Heart } from 'lucide-react'
 import { apiService } from './services/api'
 import { VibeResults } from './components/VibeResults'
 import { InteractiveVisualizer } from './components/InteractiveVisualizer'
 import './index.css'
 
 const iconMap = {
-  'Happy': Smile,
-  'Sad': CloudRain,
-  'Angry': Zap,
+  'Late': Moon,
+  'Power': Flame,
   'Chill': Coffee,
   'Focus': Target,
-  'Party': Flame
+  'Nostalgic': Shuffle,
+  'Heartbreak': Heart
 }
 
 const loadingMessages = [
@@ -75,15 +75,22 @@ function App() {
   }, [results])
 
   const handleRecommendation = async (id = null, text = null) => {
-    const input = text || inputText;
-    if (!id && !input.trim()) {
+    // Determine the source: specific ID (button), specific text (arg), or current input
+    const vibeSource = id ? 'id' : (text ? 'text' : 'input');
+    const finalInput = text || (id ? '' : inputText);
+
+    if (!id && !finalInput.trim()) {
       setError("The portal needs a vibe to focus. Please describe your soul or select a mood.");
       return;
     }
 
+    // Reset UI states for the new frequency
     setError(null);
+    if (id) setInputText(''); // Clear input if choosing a portal for cleaner UX
+
+    // Set UI Vibe Name
     const selectedMood = id ? moods.find(m => m.id === id) : null;
-    setCurrentVibeName(selectedMood ? selectedMood.label : (input || 'Custom Vibe'));
+    setCurrentVibeName(selectedMood ? selectedMood.label : (finalInput || 'Custom Vibe'));
 
     setLoadingMsg(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
     setLoading(true)
@@ -93,7 +100,7 @@ function App() {
     try {
       const data = await apiService.getRecommendations({
         mood_id: id,
-        text_input: input
+        text_input: finalInput
       });
       setResults(data)
     } catch (err) {

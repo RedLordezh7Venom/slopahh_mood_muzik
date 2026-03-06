@@ -61,14 +61,13 @@ class RecommendRequest(BaseModel):
 
 @app.get("/api/v1/moods")
 async def get_moods():
-    moods = [
-        { "id": "late_night", "label": "Late Night 🌙", "default_color": "#1A1A2E" },
-        { "id": "gym", "label": "Power Hour 🔥", "default_color": "#E63946" },
-        { "id": "focus", "label": "Deep Focus 🧠", "default_color": "#2A9D8F" },
-        { "id": "nostalgic", "label": "Nostalgic 📼", "default_color": "#8D6E63" },
-        { "id": "chill", "label": "Chill Vibe 🌊", "default_color": "#457B9D" }
+    return [
+        { 
+            "id": k, 
+            "label": v["label"], 
+            "default_color": v["color_hex"] 
+        } for k, v in MOOD_CATEGORIES.items()
     ]
-    return moods
 
 @app.post("/api/v1/recommend", response_model=RecommendResponse)
 async def recommend(req: RecommendRequest):
