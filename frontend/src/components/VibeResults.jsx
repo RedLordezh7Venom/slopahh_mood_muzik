@@ -6,14 +6,14 @@ export const PlaylistHeader = ({ moodLabel, playlistName }) => {
         <div className="playlist-header">
             <p style={{
                 textTransform: 'uppercase',
-                fontSize: '0.8rem',
-                letterSpacing: '2px',
-                color: 'var(--primary)',
-                marginBottom: '0.5rem'
+                fontSize: '0.7rem',
+                color: 'var(--vibe-color)',
+                marginBottom: '5px',
+                fontWeight: 'bold'
             }}>
-                {moodLabel} Detected
+                {moodLabel} FOUND IN DATABASE
             </p>
-            <h2 className="playlist-title">{playlistName}</h2>
+            <h2 className="playlist-title">&gt; {playlistName}</h2>
         </div>
     );
 };
@@ -27,23 +27,24 @@ export const RecommendationList = ({ songs, moodLabel }) => {
     return (
         <div className="song-list">
             {songs.map((song, idx) => (
-                <div key={idx} className="song-card" style={{ animationDelay: `${idx * 0.1}s` }}>
+                <div key={idx} className="song-card">
                     <div className="song-info">
                         <span className="song-title">{song.title}</span>
-                        <span className="song-artist">{song.artist} • {song.album}</span>
-                        <p style={{ fontSize: '0.8rem', marginTop: '0.5rem', opacity: 0.7 }}>
-                            {song.vibe_snippet || `A perfect track for your ${moodLabel} vibe.`}
+                        <br />
+                        <span className="song-artist">{song.artist} // {song.album}</span>
+                        <p style={{ fontSize: '0.7rem', marginTop: '5px', opacity: 0.8, fontStyle: 'italic' }}>
+                            # {song.vibe_snippet || `A perfect track for your ${moodLabel} vibe.`}
                         </p>
                     </div>
                     <div className="song-actions">
                         {song.spotify_url && (
-                            <a href={song.spotify_url} target="_blank" rel="noreferrer" className="action-btn" title="Open in Spotify">
-                                🟢
+                            <a href={song.spotify_url} target="_blank" rel="noreferrer" className="action-btn" title="Spotify">
+                                [SPOTIFY]
                             </a>
                         )}
                         {song.youtube_url && (
-                            <a href={song.youtube_url} target="_blank" rel="noreferrer" className="action-btn" title="Search on YouTube">
-                                🔴
+                            <a href={song.youtube_url} target="_blank" rel="noreferrer" className="action-btn" title="YouTube">
+                                [YOUTUBE]
                             </a>
                         )}
                     </div>

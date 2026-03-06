@@ -21,9 +21,9 @@ function App() {
   // Change background color based on mood
   useEffect(() => {
     if (results?.mood?.color_hex) {
-      document.body.style.backgroundColor = results.mood.color_hex;
+      document.documentElement.style.setProperty('--vibe-color', results.mood.color_hex);
     } else {
-      document.body.style.backgroundColor = '#0f172a';
+      document.documentElement.style.setProperty('--vibe-color', '#00ff00');
     }
   }, [results])
 
