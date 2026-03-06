@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: slopahh-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=sqlite:///./data/music.db
+    volumes:
+      # Map data directory for SQLite persistence
+      - ./backend/data:/app/data
+      # Map logs if needed
+      - ./backend/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - slopahh-vibe-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: slopahh-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - slopahh-vibe-net
+
+networks:
+  slopahh-vibe-net:
+    driver: bridge
+
+volumes:
+  vibe_data:
+    driver: local
