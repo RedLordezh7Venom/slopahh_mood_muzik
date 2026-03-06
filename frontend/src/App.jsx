@@ -34,6 +34,7 @@ function App() {
   const [theme, setTheme] = useState('dark')
   const [loadingMsg, setLoadingMsg] = useState(loadingMessages[0])
   const [currentVibeName, setCurrentVibeName] = useState('')
+  const [error, setError] = useState(null)
   const meshRef = useRef(null)
 
   const toggleTheme = () => {
@@ -74,8 +75,15 @@ function App() {
   }, [results])
 
   const handleRecommendation = async (id = null, text = null) => {
+    const input = text || inputText;
+    if (!id && !input.trim()) {
+      setError("The portal needs a vibe to focus. Please describe your soul or select a mood.");
+      return;
+    }
+
+    setError(null);
     const selectedMood = id ? moods.find(m => m.id === id) : null;
-    setCurrentVibeName(selectedMood ? selectedMood.label : (text || inputText || 'Custom Vibe'));
+    setCurrentVibeName(selectedMood ? selectedMood.label : (input || 'Custom Vibe'));
 
     setLoadingMsg(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
     setLoading(true)
@@ -85,11 +93,12 @@ function App() {
     try {
       const data = await apiService.getRecommendations({
         mood_id: id,
-        text_input: text || inputText
+        text_input: input
       });
       setResults(data)
     } catch (err) {
-      console.error(err);
+      console.error("Portal Error:", err);
+      setError("The frequency is unstable. Our AI couldn't decode that vibe—try a different description.");
     } finally {
       setLoading(false)
     }
@@ -180,6 +189,17 @@ function App() {
         </motion.div>
 
         <AnimatePresence mode="wait">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="error-portal"
+            >
+              {error}
+            </motion.div>
+          )}
+
           {loading && (
             <motion.div
               key="loader"

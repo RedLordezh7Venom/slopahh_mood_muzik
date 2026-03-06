@@ -59,7 +59,6 @@ class MoodService:
         else:
             genai.configure(api_key=api_key)
             self.model = genai.GenerativeModel('gemma-3-27b-it')
-            print(self.model)
 
     def detect_mood(self, user_text: str) -> Dict[str, Any]:
         """
@@ -70,12 +69,10 @@ class MoodService:
         # 1. Try Heuristic Keywords first (Instant & Predictable)
         heuristic_key = self.heuristic_detect_mood(user_text)
         if heuristic_key:
-            print("h")
             return MOOD_CATEGORIES[heuristic_key]
 
         # 2. Fallback to AI if no strong keyword matches
         if self.model:
-            print("model")
             categories_str = ", ".join(MOOD_CATEGORIES.keys())
             prompt = f"""
             Analyze the following text and classify it into exactly ONE of these categories: {categories_str}.
@@ -86,14 +83,16 @@ class MoodService:
             try:
                 response = self.model.generate_content(prompt)
                 detected_key = response.text.strip().lower()
+                # Clean up potential markdown formatting
+                detected_key = detected_key.replace('`', '').replace('"', '').strip()
+                
                 if detected_key in MOOD_CATEGORIES:
                     return MOOD_CATEGORIES[detected_key]
             except Exception as e:
-                print(f"Error in Gemini Mood Detection: {e}")
+                print(f"CRITICAL: Gemini Mood Detection Failure: {e}")
 
-        # 3. Final Fallback: Random Vibe (keeps it fresh)
+        # 3. Final Fallback: Random Vibe
         random_key = random.choice(list(MOOD_CATEGORIES.keys()))
-        print("rand")
         return MOOD_CATEGORIES[random_key]
 
     def heuristic_detect_mood(self, user_text: str) -> str:
