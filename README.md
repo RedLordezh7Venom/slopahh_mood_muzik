@@ -1,4 +1,10 @@
-# Slopahh Mood Muzik: Mood-Based Music Recommender 🎧
+A Vibecoding experiment based on decomposition of steps vs Repeating prompts vs Generation vs breakdown prompting 
+This uses decomposition and prompt doctoring for each step
+
+
+
+readme for the project : 
+ Slopahh Mood Muzik: Mood-Based Music Recommender 🎧
 
 An AI-powered music recommendation system that translates your vibe into the perfect playlist.
 
