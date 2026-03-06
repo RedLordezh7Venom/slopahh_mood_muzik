@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
-import './index.css'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Sparkles, Search, Shuffle, Headphones, Youtube, Globe } from 'lucide-react'
 import { apiService } from './services/api'
-import { PlaylistHeader, RecommendationList } from './components/VibeResults'
+import { VibeResults } from './components/VibeResults'
+import './index.css'
 
 function App() {
   const [inputText, setInputText] = useState('')
@@ -9,20 +11,21 @@ function App() {
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [activeMood, setActiveMood] = useState(null)
+  const meshRef = useRef(null)
 
-  // Fetch predefined moods on mount
   useEffect(() => {
     apiService.getMoods()
       .then(data => setMoods(data))
       .catch(err => console.error("Error fetching moods:", err))
   }, [])
 
-  // Change background color based on mood
+  // Dynamic Reactive Background Mesh logic
   useEffect(() => {
     if (results?.mood?.color_hex) {
-      document.documentElement.style.setProperty('--vibe', results.mood.color_hex);
-    } else {
-      document.documentElement.style.setProperty('--vibe', '#00ff00');
+      document.documentElement.style.setProperty('--accent-primary', results.mood.color_hex);
+      // Generate a complementary/offset color for the second gradient point
+      const secondaryColor = results.mood.color_hex + '88'; // add transparency or shift
+      document.documentElement.style.setProperty('--accent-secondary', '#7000ff');
     }
   }, [results])
 
@@ -38,7 +41,7 @@ function App() {
       });
       setResults(data)
     } catch (err) {
-      alert("Error: " + (err.message || "Failed to fetch vibe. Check server."));
+      console.error(err);
     } finally {
       setLoading(false)
     }
@@ -51,59 +54,95 @@ function App() {
 
   return (
     <div className="container">
+      <div className="vibe-mesh" ref={meshRef}></div>
+
       <header>
-        <h1>Slopahh Mood Muzik</h1>
-        <p className="subtitle">Interactive Music Recommender</p>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <p className="subtitle" style={{ marginBottom: '0.5rem', letterSpacing: '2px', fontWeight: 800 }}>
+            <Sparkles size={14} style={{ display: 'inline', marginRight: '5px' }} /> AI-CURATED SOUNDSCAPES
+          </p>
+          <h1>Slopahh <br /><span className="highlight-text">Mood Muzik</span></h1>
+          <p className="subtitle">
+            Transcend your current state through generative audio matching. Describe your vibe or select a portal.
+          </p>
+        </motion.div>
       </header>
 
       <main>
-        {/* Input Area */}
-        <div className="vibe-input-group">
+        <motion.div
+          className="input-portal"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+        >
+          <div style={{ position: 'absolute', right: '30px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }}>
+            <Search size={24} />
+          </div>
           <input
             type="text"
             className="main-input"
-            placeholder="Search mood via text... (Enter to submit)"
+            placeholder="How does your soul feel right now?"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleRecommendation()}
           />
-        </div>
+        </motion.div>
 
-        {/* Categories */}
-        <div className="mood-grid">
-          {moods.map((m) => (
-            <button
+        <motion.div
+          className="mood-strip"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          {moods.map((m, i) => (
+            <motion.button
               key={m.id}
-              className={`mood-btn ${activeMood === m.id ? 'active' : ''}`}
+              className={`mood-chip ${activeMood === m.id ? 'active' : ''}`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleRecommendation(m.id)}
             >
-              {m.label}
-            </button>
+              {m.label.split(' ')[0]}
+            </motion.button>
           ))}
-        </div>
+          <button className="mood-chip" onClick={triggerRandom} style={{ borderStyle: 'dashed' }}>
+            <Shuffle size={14} style={{ marginRight: '8px' }} /> RANDOM
+          </button>
+        </motion.div>
 
-        <button className="random-btn" onClick={triggerRandom}>
-          [ RANDOMIZE VIBE ]
-        </button>
+        <AnimatePresence mode="wait">
+          {loading && (
+            <motion.div
+              key="loader"
+              className="loading-pulse"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              Analyzing the Frequency...
+            </motion.div>
+          )}
 
-        {/* Status */}
-        {loading && <div style={{ fontSize: '11px', color: 'var(--vibe)', textAlign: 'center' }}>DATA RETRIEVAL IN PROGRESS...</div>}
-
-        {/* Results */}
-        {results && (
-          <div className="results-section">
-            <PlaylistHeader
-              moodLabel={results.mood.label}
-              playlistName={results.playlist_name}
-            />
-
-            <RecommendationList
-              songs={results.recommendations}
-              moodLabel={results.mood.label}
-            />
-          </div>
-        )}
+          {results && (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, cubicBezier: [0.23, 1, 0.32, 1] }}
+            >
+              <VibeResults results={results} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
+
+      <footer style={{ marginTop: '8rem', textAlign: 'center', opacity: 0.3, fontSize: '0.8rem' }}>
+        &copy; 2025 SLOPAHH MUZIK CORE // BUILT FOR THE IMMERSIVE WEB
+      </footer>
     </div>
   )
 }

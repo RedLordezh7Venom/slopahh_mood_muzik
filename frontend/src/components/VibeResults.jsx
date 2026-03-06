@@ -1,53 +1,88 @@
-/**
- * Component to render the generated playlist name with mood flair
- */
-export const PlaylistHeader = ({ moodLabel, playlistName }) => {
+import { motion } from 'framer-motion'
+import { Headphones, Youtube, ArrowUpRight, Play, ExternalLink } from 'lucide-react'
+
+export const VibeResults = ({ results }) => {
+    if (!results) return null;
+
     return (
-        <div className="playlist-header">
-            <p className="subtitle">
-                {moodLabel}
-            </p>
-            <h2 className="playlist-title">{playlistName}</h2>
+        <div className="playlist-reveal">
+            <div className="playlist-meta">
+                <motion.p
+                    className="playlist-tag"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    {results.mood.label} SPECTRUM DETECTED
+                </motion.p>
+                <motion.h2
+                    className="playlist-title"
+                    initial={{ opacity: 0, k: -20 }}
+                    animate={{ opacity: 1, k: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    {results.playlist_name}
+                </motion.h2>
+            </div>
+
+            <div className="song-grid">
+                {results.recommendations.map((song, idx) => (
+                    <SongOrb key={idx} song={song} index={idx} />
+                ))}
+            </div>
         </div>
     );
 };
 
-/**
- * Layout component for displaying a list of recommended songs
- */
-export const RecommendationList = ({ songs, moodLabel }) => {
-    if (!songs || songs.length === 0) return null;
-
+const SongOrb = ({ song, index }) => {
     return (
-        <div className="song-list">
-            {songs.map((song, idx) => (
-                <div key={idx} className="song-card">
-                    <div className="song-info">
-                        <div className="song-title">{song.title}</div>
-                        <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
-                            Artist: {song.artist} <br />
-                            Album: {song.album}
-                        </div>
-                        {song.vibe_snippet && (
-                            <p style={{ fontSize: '11px', marginTop: '10px', color: '#666', fontStyle: 'italic' }}>
-                                # {song.vibe_snippet}
-                            </p>
-                        )}
-                    </div>
-                    <div className="song-actions">
-                        {song.youtube_url && (
-                            <a href={song.youtube_url} target="_blank" rel="noreferrer" className="action-btn">
-                                LISTEN ON YOUTUBE
-                            </a>
-                        )}
-                        {song.spotify_url && (
-                            <a href={song.spotify_url} target="_blank" rel="noreferrer" className="action-btn">
-                                SPOTIFY
-                            </a>
-                        )}
-                    </div>
+        <motion.div
+            className="song-orb"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+                delay: 0.4 + (index * 0.1),
+                duration: 0.8,
+                ease: [0.23, 1, 0.32, 1]
+            }}
+            whileHover={{ scale: 1.02 }}
+        >
+            <div className="orb-glow"></div>
+
+            <div className="song-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                    <Headphones size={20} className="highlight-text" />
+                    <motion.div whileHover={{ rotate: 45 }}>
+                        <ArrowUpRight size={20} opacity={0.3} />
+                    </motion.div>
                 </div>
-            ))}
-        </div>
-    );
-};
+
+                <span className="song-label">{song.title}</span>
+                <span className="song-sublabel">{song.artist} // {song.album}</span>
+
+                {song.vibe_snippet && (
+                    <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', marginBottom: '2rem', fontStyle: 'italic', lineHeight: '1.5' }}>
+                        "{song.vibe_snippet}"
+                    </p>
+                )}
+
+                <div className="song-footer">
+                    <motion.a
+                        href={song.spotify_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="stream-btn"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <Play size={12} fill="currentColor" style={{ marginRight: '8px', display: 'inline' }} /> OPEN PORTAL
+                    </motion.a>
+
+                    <a href={song.youtube_url} target="_blank" rel="noreferrer" className="secondary-btn">
+                        YOUTUBE <ExternalLink size={10} style={{ display: 'inline', marginLeft: '5px' }} />
+                    </a>
+                </div>
+            </div>
+        </motion.div>
+    )
+}
