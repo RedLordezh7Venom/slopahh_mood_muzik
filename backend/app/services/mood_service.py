@@ -58,7 +58,7 @@ class MoodService:
             self.model = None
         else:
             genai.configure(api_key=api_key)
-            self.model = genai.GenerativeModel('gemini-pro')
+            self.model = genai.GenerativeModel('gemma-3-27b-it')
 
     def detect_mood(self, user_text: str) -> Dict[str, Any]:
         """
