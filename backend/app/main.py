@@ -2,7 +2,7 @@ from app import create_app
 from app.services.mood_service import mood_service, MOOD_CATEGORIES
 from app.services.song_library import get_songs_by_vibe, generate_yt_link
 from app.services.playlist_service import generate_playlist_name
-from app.core.database import SessionLocal
+from app.core.database import session_scope
 from app.models.mood_history import MoodHistory
 import os
 
@@ -50,7 +50,6 @@ def recommend():
         return jsonify({"error": "Please provide a mood description or a mood ID"}), 422
 
     # 1. Determine the vibe (AI Detection)
-    # If mood_id is provided, use it. Otherwise, let AI detect from text.
     if mood_id:
         detected_mood = MOOD_CATEGORIES.get(mood_id, MOOD_CATEGORIES["chill"])
     else:
@@ -81,20 +80,18 @@ def recommend():
         if validate_song_payload(song_entry):
             final_recommendations.append(song_entry)
 
-    # 5. Save to Mood History (Persistence)
-    db = SessionLocal()
+    # 5. Save to Mood History (Robust Persistence)
     try:
-        history_entry = MoodHistory(
-            user_input=text_input or mood_id,
-            detected_mood=detected_mood['label'],
-            playlist_name=playlist_name
-        )
-        db.add(history_entry)
-        db.commit()
+        with session_scope() as session:
+            history_entry = MoodHistory(
+                user_input=text_input or mood_id,
+                detected_mood=detected_mood['label'],
+                playlist_name=playlist_name
+            )
+            session.add(history_entry)
+            # Commit is handled by session_scope context manager
     except Exception as e:
         print(f"Error saving history: {e}")
-    finally:
-        db.close()
 
     response = {
         "mood": {
@@ -110,13 +107,14 @@ def recommend():
 @app.route('/api/v1/history', methods=['GET'])
 def get_history():
     """Returns user mood history from the database."""
-    db = SessionLocal()
     try:
-        # Get the 10 most recent entries
-        history = db.query(MoodHistory).order_by(MoodHistory.timestamp.desc()).limit(10).all()
-        return jsonify([item.to_dict() for item in history])
-    finally:
-        db.close()
+        with session_scope() as session:
+            # Get the 10 most recent entries
+            history = session.query(MoodHistory).order_by(MoodHistory.timestamp.desc()).limit(10).all()
+            return jsonify([item.to_dict() for item in history])
+    except Exception as e:
+        print(f"Error fetching history: {e}")
+        return jsonify({"error": "Could not fetch history"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8000))
