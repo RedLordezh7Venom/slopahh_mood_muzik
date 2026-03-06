@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './index.css'
+import { apiService } from './services/api'
 
 function App() {
   const [inputText, setInputText] = useState('')
@@ -10,8 +11,7 @@ function App() {
 
   // Fetch predefined moods on mount
   useEffect(() => {
-    fetch('http://localhost:8000/api/v1/moods')
-      .then(res => res.json())
+    apiService.getMoods()
       .then(data => setMoods(data))
       .catch(err => console.error("Error fetching moods:", err))
   }, [])
@@ -31,18 +31,13 @@ function App() {
     setActiveMood(id)
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/recommend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mood_id: id,
-          text_input: text || inputText
-        })
-      })
-      const data = await response.json()
+      const data = await apiService.getRecommendations({
+        mood_id: id,
+        text_input: text || inputText
+      });
       setResults(data)
     } catch (err) {
-      console.error("Vibe error:", err)
+      alert(err.message || "Vibe check failed. Is the backend running?");
     } finally {
       setLoading(false)
     }
