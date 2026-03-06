@@ -23,23 +23,26 @@ export const RecommendationList = ({ songs, moodLabel }) => {
             {songs.map((song, idx) => (
                 <div key={idx} className="song-card">
                     <div className="song-info">
-                        <span className="song-title">{song.title}</span>
-                        <span className="song-artist">{song.artist} — {song.album}</span>
+                        <div className="song-title">{song.title}</div>
+                        <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                            Artist: {song.artist} <br />
+                            Album: {song.album}
+                        </div>
                         {song.vibe_snippet && (
-                            <p style={{ fontSize: '11px', marginTop: '8px', color: '#555', fontStyle: 'italic' }}>
-                                {song.vibe_snippet}
+                            <p style={{ fontSize: '11px', marginTop: '10px', color: '#666', fontStyle: 'italic' }}>
+                                # {song.vibe_snippet}
                             </p>
                         )}
                     </div>
                     <div className="song-actions">
+                        {song.youtube_url && (
+                            <a href={song.youtube_url} target="_blank" rel="noreferrer" className="action-btn">
+                                LISTEN ON YOUTUBE
+                            </a>
+                        )}
                         {song.spotify_url && (
                             <a href={song.spotify_url} target="_blank" rel="noreferrer" className="action-btn">
                                 SPOTIFY
-                            </a>
-                        )}
-                        {song.youtube_url && (
-                            <a href={song.youtube_url} target="_blank" rel="noreferrer" className="action-btn">
-                                YOUTUBE
                             </a>
                         )}
                     </div>
