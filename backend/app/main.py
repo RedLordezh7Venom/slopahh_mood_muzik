@@ -1,16 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from typing import Optional, List
 import os
 from dotenv import load_dotenv
-
-from app.services.mood_service import mood_service, MOOD_CATEGORIES
-from app.services.song_library import get_songs_by_vibe, generate_yt_link
-from app.services.playlist_service import generate_playlist_name
-from app.core.database import session_scope, engine, Base
-from app.models.mood_history import MoodHistory
 
 # Flexible Environment Loading: Checks current and parent directories for .env
 env_paths = [".env", "../.env"]
@@ -22,8 +11,17 @@ for path in env_paths:
         env_found = True
         break
 
-if not env_found:
-    print("WARNING: No .env found. Ensure environment variables are set manually.")
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from typing import Optional, List
+
+from app.services.mood_service import mood_service, MOOD_CATEGORIES
+from app.services.song_library import get_songs_by_vibe, generate_yt_link
+from app.services.playlist_service import generate_playlist_name
+from app.core.database import session_scope, engine, Base
+from app.models.mood_history import MoodHistory
 
 # Initialize Database
 Base.metadata.create_all(bind=engine)
