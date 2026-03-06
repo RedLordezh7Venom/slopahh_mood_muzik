@@ -33,6 +33,7 @@ function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [theme, setTheme] = useState('dark')
   const [loadingMsg, setLoadingMsg] = useState(loadingMessages[0])
+  const [currentVibeName, setCurrentVibeName] = useState('')
   const meshRef = useRef(null)
 
   const toggleTheme = () => {
@@ -73,6 +74,9 @@ function App() {
   }, [results])
 
   const handleRecommendation = async (id = null, text = null) => {
+    const selectedMood = id ? moods.find(m => m.id === id) : null;
+    setCurrentVibeName(selectedMood ? selectedMood.label : (text || inputText || 'Custom Vibe'));
+
     setLoadingMsg(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
     setLoading(true)
     setResults(null)
@@ -92,6 +96,7 @@ function App() {
   }
 
   const triggerRandom = () => {
+    if (moods.length === 0) return;
     const randomMood = moods[Math.floor(Math.random() * moods.length)];
     handleRecommendation(randomMood.id);
   }
@@ -183,6 +188,7 @@ function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
+              <div style={{ fontSize: '0.8rem', opacity: 0.5, marginBottom: '0.5rem', letterSpacing: '2px' }}>FOLLOWING: {currentVibeName}</div>
               {loadingMsg}
             </motion.div>
           )}
