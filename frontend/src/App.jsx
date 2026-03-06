@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Search, Shuffle, Headphones, Youtube, Globe } from 'lucide-react'
 import { apiService } from './services/api'
 import { VibeResults } from './components/VibeResults'
+import { InteractiveVisualizer } from './components/InteractiveVisualizer'
 import './index.css'
 
 function App() {
@@ -11,7 +12,16 @@ function App() {
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [activeMood, setActiveMood] = useState(null)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const meshRef = useRef(null)
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   useEffect(() => {
     apiService.getMoods()
@@ -55,6 +65,14 @@ function App() {
   return (
     <div className="container">
       <div className="vibe-mesh" ref={meshRef}></div>
+      <div
+        className="cursor-glow"
+        style={{
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`
+        }}
+      ></div>
+      <InteractiveVisualizer />
 
       <header>
         <motion.div
