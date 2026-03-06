@@ -43,15 +43,15 @@ export const InteractiveVisualizer = () => {
                 });
             });
 
-        // Mouse Interaction
-        svg.on('mousemove', (event) => {
-            const [mx, my] = d3.pointer(event);
-            simulation.force('mouse', d3.forceRadial(150, mx, my).strength(0.3));
+        // Global Mouse Interaction for ripples and particle physics
+        const handleMouseMoveGlobal = (event) => {
+            simulation.force('mouse', d3.forceRadial(150, event.clientX, event.clientY).strength(0.3));
             simulation.alphaTarget(0.1).restart();
-        });
+        };
 
-        svg.on('mousedown', (event) => {
-            const [mx, my] = d3.pointer(event);
+        const handleMouseDownGlobal = (event) => {
+            const mx = event.clientX;
+            const my = event.clientY;
 
             // Radial Pulse (Visual Beat)
             svg.append('circle')
@@ -81,7 +81,10 @@ export const InteractiveVisualizer = () => {
                 }
             });
             simulation.alpha(0.8).restart();
-        });
+        };
+
+        window.addEventListener('mousemove', handleMouseMoveGlobal);
+        window.addEventListener('mousedown', handleMouseDownGlobal);
 
         const handleResize = () => {
             const w = window.innerWidth;
@@ -94,6 +97,8 @@ export const InteractiveVisualizer = () => {
         return () => {
             simulation.stop();
             window.removeEventListener('resize', handleResize);
+            window.removeEventListener('mousemove', handleMouseMoveGlobal);
+            window.removeEventListener('mousedown', handleMouseDownGlobal);
         };
     }, []);
 
@@ -106,8 +111,8 @@ export const InteractiveVisualizer = () => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                zIndex: 0,
-                pointerEvents: 'all'
+                zIndex: -1,
+                pointerEvents: 'none'
             }}
         />
     );
