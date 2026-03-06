@@ -29,13 +29,20 @@ function App() {
       .catch(err => console.error("Error fetching moods:", err))
   }, [])
 
-  // Dynamic Reactive Background Mesh logic
+  // Chameleon UI: Synchronized Color Theme Logic
   useEffect(() => {
     if (results?.mood?.color_hex) {
-      document.documentElement.style.setProperty('--accent-primary', results.mood.color_hex);
-      // Generate a complementary/offset color for the second gradient point
-      const secondaryColor = results.mood.color_hex + '88'; // add transparency or shift
-      document.documentElement.style.setProperty('--accent-secondary', '#7000ff');
+      const primary = results.mood.color_hex;
+
+      // Update CSS Variables for global theme sync
+      document.documentElement.style.setProperty('--accent-primary', primary);
+
+      // Generate a dynamic secondary color (shift hue or opacity)
+      const secondary = `${primary}cc`; // 80% opacity version
+      document.documentElement.style.setProperty('--accent-secondary', '#ffffff'); // Contrast white for accent
+
+      // Update glow intensity based on mood
+      document.documentElement.style.setProperty('--vibe-glow', `${primary}33`); // 20% opacity glow
     }
   }, [results])
 

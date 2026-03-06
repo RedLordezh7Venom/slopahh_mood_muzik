@@ -49,20 +49,20 @@ const SongOrb = ({ song, index }) => {
         >
             <div className="orb-glow"></div>
 
-            <div className="song-content">
+            <div className="song-orb-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                    <Headphones size={20} className="highlight-text" />
+                    <div className="card-badge">{song.artist.split(' ')[0]}</div>
                     <motion.div whileHover={{ rotate: 45 }}>
                         <ArrowUpRight size={20} opacity={0.3} />
                     </motion.div>
                 </div>
 
                 <span className="song-label">{song.title}</span>
-                <span className="song-sublabel">{song.artist} // {song.album}</span>
+                <span className="song-sublabel">{song.artist} • {song.album}</span>
 
                 {song.vibe_snippet && (
-                    <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', marginBottom: '2rem', fontStyle: 'italic', lineHeight: '1.5' }}>
-                        "{song.vibe_snippet}"
+                    <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginBottom: '2rem', lineHeight: '1.6' }}>
+                        {song.vibe_snippet}
                     </p>
                 )}
 
@@ -75,7 +75,7 @@ const SongOrb = ({ song, index }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <Play size={12} fill="currentColor" style={{ marginRight: '8px', display: 'inline' }} /> OPEN PORTAL
+                        <Play size={12} fill="currentColor" style={{ marginRight: '8px', display: 'inline' }} /> LISTEN
                     </motion.a>
 
                     <a href={song.youtube_url} target="_blank" rel="noreferrer" className="secondary-btn">
