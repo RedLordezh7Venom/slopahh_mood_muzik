@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import './index.css'
 import { apiService } from './services/api'
 
+import { PlaylistHeader, RecommendationList } from './components/VibeResults'
+
 function App() {
   const [inputText, setInputText] = useState('')
   const [moods, setMoods] = useState([])
@@ -93,32 +95,15 @@ function App() {
         {/* Results Container */}
         {results && (
           <div className="results-section">
-            <div className="playlist-header">
-              <p style={{ textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '2px', color: 'var(--primary)' }}>
-                {results.mood.label} Detected
-              </p>
-              <h2 className="playlist-title">{results.playlist_name}</h2>
-            </div>
+            <PlaylistHeader
+              moodLabel={results.mood.label}
+              playlistName={results.playlist_name}
+            />
 
-            <div className="song-list">
-              {results.recommendations.map((song, idx) => (
-                <div key={idx} className="song-card" style={{ animationDelay: `${idx * 0.1}s` }}>
-                  <div className="song-info">
-                    <span className="song-title">{song.title}</span>
-                    <span className="song-artist">{song.artist} • {song.album}</span>
-                    <p style={{ fontSize: '0.8rem', marginTop: '0.5rem', opacity: 0.7 }}>{song.vibe_snippet}</p>
-                  </div>
-                  <div className="song-actions">
-                    <a href={song.spotify_url} target="_blank" rel="noreferrer" className="action-btn" title="Spotify">
-                      🟢
-                    </a>
-                    <a href={song.youtube_url} target="_blank" rel="noreferrer" className="action-btn" title="YouTube">
-                      🔴
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <RecommendationList
+              songs={results.recommendations}
+              moodLabel={results.mood.label}
+            />
           </div>
         )}
       </main>
