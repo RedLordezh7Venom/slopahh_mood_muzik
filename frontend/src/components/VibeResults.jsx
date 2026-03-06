@@ -34,7 +34,20 @@ export const VibeResults = ({ results }) => {
     );
 };
 
+const getEmbedUrl = (url) => {
+    if (!url) return null;
+    let videoId = '';
+    if (url.includes('v=')) {
+        videoId = url.split('v=')[1].split('&')[0];
+    } else if (url.includes('be/')) {
+        videoId = url.split('be/')[1].split('?')[0];
+    }
+    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1` : null;
+};
+
 const SongOrb = ({ song, index }) => {
+    const embedUrl = getEmbedUrl(song.youtube_url);
+
     return (
         <motion.div
             className="song-orb"
@@ -45,7 +58,7 @@ const SongOrb = ({ song, index }) => {
                 duration: 0.8,
                 ease: [0.23, 1, 0.32, 1]
             }}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.01 }}
         >
             <div className="orb-glow"></div>
 
@@ -56,6 +69,21 @@ const SongOrb = ({ song, index }) => {
                         <ArrowUpRight size={20} opacity={0.3} />
                     </motion.div>
                 </div>
+
+                {embedUrl && (
+                    <div className="preview-container">
+                        <iframe
+                            className="video-portal"
+                            src={embedUrl}
+                            title={`${song.title} Preview`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            loading="lazy"
+                            onError={(e) => console.log("Embed failed", e)}
+                        ></iframe>
+                    </div>
+                )}
 
                 <span className="song-label">{song.title}</span>
                 <span className="song-sublabel">{song.artist} • {song.album}</span>
@@ -79,7 +107,7 @@ const SongOrb = ({ song, index }) => {
                     </motion.a>
 
                     <a href={song.youtube_url} target="_blank" rel="noreferrer" className="secondary-btn">
-                        YOUTUBE <ExternalLink size={10} style={{ display: 'inline', marginLeft: '5px' }} />
+                        FULL VERSION <ExternalLink size={10} style={{ display: 'inline', marginLeft: '5px' }} />
                     </a>
                 </div>
             </div>
