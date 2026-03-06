@@ -13,6 +13,48 @@
   --font-body: 'Plus Jakarta Sans', sans-serif;
 }
 
+[data-theme='light'] {
+  --bg-core: #e8ecef;
+  --text-main: #0c0c0d;
+  --text-dim: rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .mood-chip {
+  color: var(--text-main);
+}
+
+[data-theme='light'] .mood-chip:hover {
+  background: #fff;
+  color: #000;
+}
+
+[data-theme='light'] .mood-chip.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+[data-theme='light'] .main-input {
+  background: var(--glass-bg);
+  color: var(--text-main);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .main-input:focus {
+  background: #ffffff;
+}
+
+[data-theme='light'] .stream-btn {
+  background: #000;
+  color: #fff;
+}
+
+[data-theme='light'] .secondary-btn:hover {
+  color: #000;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -58,6 +100,34 @@ body {
   transform: translate(-50%, -50%);
   transition: background 0.8s ease;
   filter: blur(40px);
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+[data-theme='light'] .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 #root {
@@ -221,6 +291,12 @@ h1 {
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme='light'] .song-orb {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .song-orb:hover {
@@ -230,6 +306,14 @@ h1 {
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     0 0 30px var(--vibe-glow);
+}
+
+[data-theme='light'] .song-orb:hover {
+  background: #ffffff;
+  border-color: var(--glass-border);
+  box-shadow:
+    0 30px 60px -12px rgba(0, 0, 0, 0.15),
+    0 0 40px var(--vibe-glow);
 }
 
 .orb-glow {

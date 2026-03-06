@@ -1,10 +1,28 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, Search, Shuffle, Headphones, Youtube, Globe } from 'lucide-react'
+import { Sparkles, Search, Shuffle, Moon, Sun, Smile, CloudRain, Zap, Coffee, Target, Flame } from 'lucide-react'
 import { apiService } from './services/api'
 import { VibeResults } from './components/VibeResults'
 import { InteractiveVisualizer } from './components/InteractiveVisualizer'
 import './index.css'
+
+const iconMap = {
+  'Happy': Smile,
+  'Sad': CloudRain,
+  'Angry': Zap,
+  'Chill': Coffee,
+  'Focus': Target,
+  'Party': Flame
+}
+
+const loadingMessages = [
+  "Synchronizing audio waves...",
+  "Consulting the vibe oracle...",
+  "Analyzing your frequency...",
+  "Capturing the mood...",
+  "Tuning into the spectrum...",
+  "Decoding emotional state..."
+]
 
 function App() {
   const [inputText, setInputText] = useState('')
@@ -13,7 +31,15 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [activeMood, setActiveMood] = useState(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [theme, setTheme] = useState('dark')
+  const [loadingMsg, setLoadingMsg] = useState(loadingMessages[0])
   const meshRef = useRef(null)
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  }
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -47,6 +73,7 @@ function App() {
   }, [results])
 
   const handleRecommendation = async (id = null, text = null) => {
+    setLoadingMsg(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
     setLoading(true)
     setResults(null)
     setActiveMood(id)
@@ -71,6 +98,10 @@ function App() {
 
   return (
     <div className="container">
+      <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle Theme">
+        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
+
       <div className="vibe-mesh" ref={meshRef}></div>
       <div
         className="cursor-glow"
@@ -123,19 +154,23 @@ function App() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          {moods.map((m, i) => (
-            <motion.button
-              key={m.id}
-              className={`mood-chip ${activeMood === m.id ? 'active' : ''}`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleRecommendation(m.id)}
-            >
-              {m.label.split(' ')[0]}
-            </motion.button>
-          ))}
+          {moods.map((m, i) => {
+            const IconComponent = iconMap[m.label.split(' ')[0]] || Sparkles;
+            return (
+              <motion.button
+                key={m.id}
+                className={`mood-chip ${activeMood === m.id ? 'active' : ''}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleRecommendation(m.id)}
+              >
+                <IconComponent size={14} style={{ display: 'inline', marginRight: '6px' }} />
+                {m.label.split(' ')[0]}
+              </motion.button>
+            )
+          })}
           <button className="mood-chip" onClick={triggerRandom} style={{ borderStyle: 'dashed' }}>
-            <Shuffle size={14} style={{ marginRight: '8px' }} /> RANDOM
+            <Shuffle size={14} style={{ marginRight: '8px', display: 'inline' }} /> RANDOM
           </button>
         </motion.div>
 
@@ -148,7 +183,7 @@ function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              Analyzing the Frequency...
+              {loadingMsg}
             </motion.div>
           )}
 
@@ -159,7 +194,7 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, cubicBezier: [0.23, 1, 0.32, 1] }}
             >
-              <VibeResults results={results} />
+              <VibeResults results={results} theme={theme} />
             </motion.div>
           )}
         </AnimatePresence>
